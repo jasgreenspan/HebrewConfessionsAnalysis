@@ -21,7 +21,7 @@ for post in get_posts('ReligiousLGBTQconfessions', pages=10):
         post_text = post_text[id_match.end():]
 
         # Reverse text order from Hebrew
-        post_text = get_display(post_text, upper_is_rtl=True)
+        post_text = get_display(post_text)
         texts += [post_text]
         
         # Collect important metadata from post
