@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from wordcloud import WordCloud, ImageColorGenerator
 from bidi.algorithm import get_display
+from rftokenizer import RFTokenizer
 
 # Define the stopwords
 stopwords_file = open('heb_stopwords.txt', encoding="utf-8")
@@ -17,7 +18,12 @@ df = pd.read_csv(os.getcwd() + '\confessions_data.csv')
 text = " ".join(post for post in df.Text)
 
 # Clean the text from Hebrew prefixes
-
+my_tokenizer = RFTokenizer(model="heb")
+data = df.Text[0]
+# print(data)
+tokenized = my_tokenizer.rf_tokenize(data, sep=" ")
+tokenized = "\n".join(tokenized)
+# print(tokenized)
 
 # Create and generate a word cloud image:
 wordcloud = WordCloud(stopwords=stopwords, font_path='C:\WINDOWS\FONTS\AHRONBD.TTF').generate(text)
