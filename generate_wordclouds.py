@@ -3,55 +3,39 @@ import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from PIL import Image
+import matplotlib.colors
+import datetime as dt
+from PIL import Image, ImageFont
+from collections import Counter
 from wordcloud import WordCloud, ImageColorGenerator
 from bidi.algorithm import get_display
-from morph import get_segmented_text_yap
-
-# def prefix_separator(data):
-#     valid_prefixes = 'כשמלוהב'
-#     words = list(data.split(" "))
-#     edited_words = words
-
-#     for i, word1 in enumerate(words):
-#         # Look at words that begin with a prefix
-#         prefix1 = word1[-1]
-#         if prefix1 in valid_prefixes:
-#             # Split word from prefix if another word exists without it in the list
-#             for word2 in words:
-#                 prefix2 = word2[-1]
-#                 if word2 == word1[:-1]:
-#                     edited_words[i] = prefix1 + ' ' + word2
-#                 elif prefix1 != prefix2 and prefix2 in valid_prefixes and word2[:-1] == word1[:-1]:
-#                     edited_words[i] = prefix1 + ' ' + word2[:-1]
-
-#     return edited_words
 
 # Define the stopwords
 stopwords_file = open('heb_stopwords.txt', encoding="utf-8")
 stopwords = [get_display(line[:-1]) for line in stopwords_file]
 
-# Load in the dataframe
-df = pd.read_csv(os.getcwd() + '\confessions_data.csv')
+# Adjust the stopwords for common words in this specific corpus
+stopwords.remove('ביבא')
+stopwords += ['שכ', 'ייה'] 
 
-# Combine the text of all the posts
-text = ' '.join(get_display(post) for post in df.Text)
-text = text.split()
-
-# Clean the text from Hebrew prefixes
-# YAP queries are max 250 words
-n = 100
-text_chunks = [' '.join(text[i:i + n]) for i in range(0, len(text), n)]
-segmented_text = ''
-for chunk in text_chunks:
-    segmented_chunk = get_segmented_text_yap(chunk)
-    time.sleep(3)
-    segmented_text += segmented_chunk
+# Read in the posts (after segmentation process)
+with open('posts_segmented.txt', 'r', encoding="utf-8") as file:
+    data = file.read().replace('\n', ' ')
 
 # Create and generate a word cloud image:
-wordcloud = WordCloud(stopwords=stopwords, font_path='C:\WINDOWS\FONTS\AHRONBD.TTF').generate(get_display(segmented_text))
+mask = np.array(Image.open('heart_mask.jpg'))
+wordcloud = WordCloud(colormap='prism',  
+                      max_words=40,
+                      stopwords=stopwords,
+                      collocations=True,
+                      mask=mask,
+                      font_path="TsMatka-Bold.otf")
+wordcloud.generate_from_text(get_display(data))
+# freq = wordcloud.process_text(get_display(data))
+# print(dict(Counter(freq).most_common(5)))
 
-# Display the generated image:
+# Save the generated image:
+fig = plt.figure(figsize=(10,8))
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis("off")
-plt.show()
+fig.savefig('wordcloud.png')
