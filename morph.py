@@ -6,7 +6,7 @@ def get_segmented_text_yap(text):
     """
     # Escape double quotes in JSON.
     text = text.replace(r'"', r'\"')
-    url = 'https://www.langndata.com/api/heb_parser?token=b112affc72a95cfb744aa0fa8d31dd5d'
+    url = 'https://www.langndata.com/api/heb_parser?token=%s' % api-token
     _json ='{"data":"'+text+'"}'    	 
     headers = {'content-type': 'application/json'}
     r = requests.post(url,  data=_json.encode('utf-8'), headers={'Content-type': 'application/json; charset=utf-8'}, timeout=5)
