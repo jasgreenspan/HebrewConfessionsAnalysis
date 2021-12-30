@@ -1,0 +1,10 @@
+# Token files
+*.env
+# Python cache files
+__pycache__/
+*.pyc
+# Data output files
+*.csv
+freq_by_month.txt
+wordcloud.png
+month_wordclouds.png
